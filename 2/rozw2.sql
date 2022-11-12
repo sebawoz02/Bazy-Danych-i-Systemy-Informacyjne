@@ -1,9 +1,11 @@
-1. 	CREATE DATABASE db_aparaty;
+--1. 	
+	CREATE DATABASE db_aparaty;
 	CREATE USER '268491'@localhost;
 	SET PASSWORD FOR '268491'@localhost=PASSWORD('Sebastian491');
 	GRANT SELECT, INSERT, UPDATE ON db_aparaty.* TO '268491'@localhost;
 
-2.	CREATE TABLE Aparat (model varchar(30) NOT NULL PRIMARY KEY,
+--2.	
+	CREATE TABLE Aparat (model varchar(30) NOT NULL PRIMARY KEY,
 	producent int,
 	matryca int,
 	obiektyw int,
@@ -34,4 +36,5 @@
 	PRIMARY KEY(ID)
 	);
 
-3.	mysql -u 268491 -p
+--3.	
+	mysql -u 268491 -p
