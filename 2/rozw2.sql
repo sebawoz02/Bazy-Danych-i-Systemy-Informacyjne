@@ -102,14 +102,122 @@
 		DECLARE cnt INT;
 		SET cnt=0;
 		WHILE cnt < 100 DO
+		IF cnt % 4 = 0 THEN
+			SET @typ = 'inny';
+		END IF;
+		IF cnt % 4 = 1 THEN
+			SET @typ = 'lustrzanka';
+		END IF;
+		IF cnt % 4 = 2 THEN
+			SET @typ = 'profesjonalny';
+		END IF;
+		IF cnt % 4 = 3 THEN
+			SET @typ = 'kompaktowy';
+		END IF;
    		INSERT INTO Aparat (model, producent, matryca, obiektyw, typ) VALUES
 		((fn_generate_random_code(6)),
 		(SELECT ID FROM Producent ORDER BY RAND() LIMIT 1),
 		(SELECT ID FROM Matryca ORDER BY RAND() LIMIT 1),
 		(SELECT ID FROM Obiektyw ORDER BY RAND() LIMIT 1),
-		('inny')
+		(@typ)
 		);
    		SET cnt = cnt + 1;
 		END WHILE;
+	END $$
+	DELIMITER ;
+
+--5.
+	DELIMITER $$
+	CREATE FUNCTION max_diagonal ( producent_id INTEGER) RETURNS VARCHAR(30)
+	NO SQL
+	BEGIN
+	SET @model = (SELECT model FROM Aparat AS a JOIN Matryca AS m ON a.matryca=m.ID WHERE a.producent=producent_id ORDER BY przekatna LIMIT 1);
+	RETURN @model;
+	END $$
+	DELIMITER ;
+
+--6.
+	DELIMITER $$
+	CREATE TRIGGER add_model BEFORE INSERT ON Aparat
+	FOR EACH ROW
+	BEGIN 
+		IF NEW.producent NOT IN (SELECT ID FROM Producent) THEN
+			INSERT INTO Producent(ID) VALUES (NEW.producent);
+		END IF;
+	END $$
+	DELIMITER ;
+
+--7.
+	DELIMITER $$
+	CREATE FUNCTION num_of_cameras ( matryca_id INTEGER) RETURNS INTEGER
+	NO SQL
+	BEGIN
+		SET @num = (SELECT COUNT(model) FROM Aparat WHERE matryca=matryca_id);
+	RETURN @num;
+	END $$
+	DELIMITER ;
+
+--8.
+	DELIMITER $$
+	CREATE TRIGGER delete_matryca AFTER DELETE ON Aparat
+	FOR EACH ROW
+	BEGIN 
+		IF OLD.matryca NOT IN(SELECT matryca FROM Aparat) THEN
+			DELETE FROM Matryca WHERE ID=OLD.matryca; 
+		END IF;
+	END $$
+	DELIMITER ;
+	
+--9.	Z konta 268491 nie mozna stworzyc widoku.
+
+	CREATE VIEW widok_zad9 AS(SELECT a.model, p.nazwa, m.przekatna, m.rozdzielczosc, o.minPrzeslona, o.maxPrzeslona FROM Aparat a
+	JOIN Matryca m ON a.matryca=m.ID JOIN Obiektyw o ON a.obiektyw=o.ID JOIN Producent p ON a.producent=p.ID
+	WHERE a.typ='lustrzanka' AND p.kraj NOT LIKE 'Chiny');
+
+--10.
+	CREATE VIEW widok_zad10 AS(SELECT p.nazwa, p.kraj, a.model FROM Producent p JOIN Aparat a ON p.ID=a.producent);
+
+	DELETE FROM Aparat WHERE producent IN(SELECT ID FROM Producent WHERE kraj='Chiny');
+
+-- Z widoku zniknely modele z chinskim producentem.
+
+--11.	Z konta 268491 nie mozna stworzyc triggerow.
+
+	ALTER TABLE Producent ADD liczbaModeli INTEGER NOT NULL;
+
+	DELIMITER $$
+	CREATE PROCEDURE updateLiczbaModeli()
+	BEGIN
+		DECLARE cnt INT;
+		SET cnt = 0;
+		WHILE cnt < 16 DO
+			UPDATE Producent SET liczbaModeli=(SELECT COUNT(model) FROM Aparat WHERE producent=cnt) WHERE ID = cnt;
+			SET cnt = cnt +1;
+		END WHILE;
+		UPDATE Producent SET liczbaModeli=(SELECT COUNT(model) FROM Aparat WHERE producent=20) WHERE ID = 20;
+	END $$
+	DELIMITER ;
+	
+	DELIMITER $$
+	CREATE TRIGGER triggerLiczbaModeliIns AFTER INSERT ON Aparat
+	FOR EACH ROW
+	BEGIN 
+		CALL updateLiczbaModeli();
+	END $$
+	DELIMITER ;
+
+	DELIMITER $$
+	CREATE TRIGGER triggerLiczbaModeliDel AFTER DELETE ON Aparat
+	FOR EACH ROW
+	BEGIN 
+		CALL updateLiczbaModeli();
+	END $$
+	DELIMITER ;
+
+	DELIMITER $$
+	CREATE TRIGGER triggerLiczbaModeliUpd AFTER UPDATE ON Aparat
+	FOR EACH ROW
+	BEGIN 
+		CALL updateLiczbaModeli();
 	END $$
 	DELIMITER ;
