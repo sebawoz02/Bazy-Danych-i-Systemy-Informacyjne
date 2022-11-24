@@ -1,8 +1,8 @@
 --1. 	
 	CREATE DATABASE db_aparaty;
-	CREATE USER '268491'@localhost;
-	SET PASSWORD FOR '268491'@localhost=PASSWORD('Sebastian491');
-	GRANT SELECT, INSERT, UPDATE ON db_aparaty.* TO '268491'@localhost;
+	CREATE USER 'index'@localhost;
+	SET PASSWORD FOR 'index'@localhost=PASSWORD('SebastianL3D');
+	GRANT SELECT, INSERT, UPDATE ON db_aparaty.* TO 'index'@localhost;
 
 --2.	
 	CREATE TABLE Aparat (model varchar(30) NOT NULL PRIMARY KEY,
@@ -37,7 +37,7 @@
 	);
 
 --3.	
-	mysql -u 268491 -p
+	mysql -u index -p
 	
 	INSERT INTO Producent (nazwa, kraj) VALUES
 	( 'Agfa' , 'Chiny'), ( 'Casio', 'Niemcy'),
@@ -74,7 +74,7 @@
 	('MOD1', 13, 114 , 12, 'inny'),('MOD22', 14, 107 , 14, 'profesjonalny'),
 	('KART33', 2, 110 , 4, 'lustrzanka');
 
---4. Z konta 268491 nie mozna stworzyc procedury.
+--4. Z konta index nie mozna stworzyc procedury.
 
 	DELIMITER $$
 	CREATE FUNCTION fn_generate_random_code (desired_code_len INTEGER) RETURNS VARCHAR(100)
@@ -168,7 +168,7 @@
 	END $$
 	DELIMITER ;
 	
---9.	Z konta 268491 nie mozna stworzyc widoku.
+--9.	Z konta index nie mozna stworzyc widoku.
 
 	CREATE VIEW widok_zad9 AS(SELECT a.model, p.nazwa, m.przekatna, m.rozdzielczosc, o.minPrzeslona, o.maxPrzeslona FROM Aparat a
 	JOIN Matryca m ON a.matryca=m.ID JOIN Obiektyw o ON a.obiektyw=o.ID JOIN Producent p ON a.producent=p.ID
@@ -181,7 +181,7 @@
 
 -- Z widoku zniknely modele z chinskim producentem.
 
---11.	Z konta 268491 nie mozna stworzyc triggerow.
+--11.	Z konta index nie mozna stworzyc triggerow.
 
 	ALTER TABLE Producent ADD liczbaModeli INTEGER NOT NULL;
 
