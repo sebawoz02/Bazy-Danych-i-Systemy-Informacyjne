@@ -1,5 +1,5 @@
-# BDiSI
-Kody oddawane na labolatoria Bazy Danych i Systemy Informacyjne.
+# Bazy-Danych-i-Systemy-Informacyjne
+Ćwiczenia SQL (MariaDB).
 
 1. Proste kwerendy SQL
 2. Procedury, triggery, funkcje, tworzenie użytkowników i 
