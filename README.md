@@ -1,5 +1,5 @@
 # Bazy-Danych-i-Systemy-Informacyjne
-Ćwiczenia SQL (MariaDB).
+Ćwiczenia SQL (dialekt MariaDB, MySQL).
 
 1. Proste kwerendy SQL
 2. Procedury, triggery, funkcje, tworzenie użytkowników i 
